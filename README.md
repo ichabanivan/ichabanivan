@@ -3,8 +3,15 @@
 - 🔭 I’m currently JavaScipt developer
 - 🌱 I’m currently learning Flutter
 
-<div style="display: flex; justify-content: space-between;">
-  <img align="left" src="https://github-readme-stats.vercel.app/api/top-langs/?username=zanusilker&layout=compact&hide=html" alt="zanusilker" />
-  <img align="center" src="https://github-readme-stats.vercel.app/api?username=zanusilker&show_icons=true" alt="zanusilker" />
-</div>
-
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <img width="100%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=zanusilker&layout=compact&hide=html" alt="zanusilker" />
+      </td>
+      <td>
+        <img width="100%" src="https://github-readme-stats.vercel.app/api?username=zanusilker&show_icons=true" alt="zanusilker" />
+      </td>
+    </tr>
+  </tbody>
+</table>
