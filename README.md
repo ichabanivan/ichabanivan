@@ -3,7 +3,8 @@
 - 🔭 I’m currently JavaScipt developer
 - 🌱 I’m currently learning Flutter
 
-<p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs/?username=zanusilker&layout=compact&hide=html" alt="abuanwar072" /></p>
-
-<p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=zanusilker&show_icons=true" alt="abuanwar072" /></p>
+<div style="display: flex; justify-content: space-between;">
+  <img align="left" src="https://github-readme-stats.vercel.app/api/top-langs/?username=zanusilker&layout=compact&hide=html" alt="zanusilker" />
+  <img align="center" src="https://github-readme-stats.vercel.app/api?username=zanusilker&show_icons=true" alt="zanusilker" /><
+</div>
 
