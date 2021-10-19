@@ -2,28 +2,29 @@
 
 ## 📫 How to reach me:
 
-<a href="https://t.me/zanusilker">
-  <img align="left" alt="Ivan Chaban | Telegram" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/telegram.svg" />
-</a>
-<a href="https://twitter.com/zanusilker">
-  <img align="left" alt="Ian Chaban | Twitter" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/twitter.svg" />
-</a>
-<a href="https://www.linkedin.com/in/ivanchaban">
-  <img align="left" alt="Ivan Chaban | LinkedIn" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/linkedin.svg" />
-</a>
+<p>
+    <a href="https://t.me/zanusilker">
+      <img align="left" alt="Ivan Chaban | Telegram" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/telegram.svg" />
+    </a>
+    <a href="https://twitter.com/zanusilker">
+      <img align="left" alt="Ian Chaban | Twitter" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/twitter.svg" />
+    </a>
+    <a href="https://www.linkedin.com/in/ivanchaban">
+      <img align="left" alt="Ivan Chaban | LinkedIn" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/linkedin.svg" />
+    </a>
+</p>
 
 <br />
 
-<p> Hi, I'm [Ivan Chaban](https://www.linkedin.com/in/ivanchaban), a passionate self-taught full stack web developer and a freelance software engineer from india. my passion for software lies with dreaming up ideas and making them come true with elegant interfaces. i take great care in the experience, architecture, and code quality of the things I build. </p>
-<img src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/life_balance.gif" alt="side Image" align="right" width="200" height="auto" />
+### About me
 
-<img align="right" alt="GIF" src="https://github.com/zanusilker/zanusilker/blob/main/code.gif?raw=true" width="500" height="320" />
+<p> Hi, I'm [Ivan Chaban](https://www.linkedin.com/in/ivanchaban), a full stack web developer from Ukraine. </p>
 
 - 🔭 I’m currently working as a Senior Software Developer in Intelliceed Inc.
 - 🌱 I’m currently learning Flutter and NodeJS
 - 💬 Ask me about anything, I am happy to help
 
-### Things I code with
+### Things I code with:
 
 [comment]: <> (### Programming Languages)
 <img alt="HTML5" src="https://img.shields.io/badge/-HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" />
@@ -73,7 +74,7 @@
 <img alt="MongoDB" src="https://img.shields.io/badge/-MongoDB-13aa52?style=flat-square&logo=mongodb&logoColor=white" />
 <img alt="PostgreSQL" src="https://img.shields.io/badge/-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white" />
 
-<h3>Open source projects</h3>
+### Open source projects:
 
 <table>
   <thead align="center">
