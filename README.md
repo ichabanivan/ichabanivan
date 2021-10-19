@@ -1,4 +1,4 @@
-<h1 align="center">Hi 👋, I'm Ivan Chaban</h1>
+<h1 align="center">Hi <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="35px">, I'm Ivan Chaban</h1>
 
 - 🔭 I’m currently JavaScipt developer
 - 🌱 I’m currently learning Flutter
