@@ -76,10 +76,10 @@
     </tr>
 	  <tr>
       <td><a href="https://github.com/TECH-Rubicone/redux-saga-controller"><b>redux-saga-controller</b></a></td>
-      <td><img alt="Stars" src="https://img.shields.io/github/stars/TECH-Rubicone/react-boilerplate-typescript?style=flat-square&labelColor=343b41"/></td>
-      <td><img alt="Forks" src="https://img.shields.io/github/forks/TECH-Rubicone/react-boilerplate-typescript?style=flat-square&labelColor=343b41"/></td>
-      <td><img alt="Issues" src="https://img.shields.io/github/issues/TECH-Rubicone/react-boilerplate-typescript?style=flat-square&labelColor=343b41"/></td>
-      <td><img alt="Pull Requests" src="https://img.shields.io/github/issues-pr/TECH-Rubicone/react-boilerplate-typescript?style=flat-square&labelColor=343b41"/></td>
+      <td><img alt="Stars" src="https://img.shields.io/github/stars/TECH-Rubicone/redux-saga-controller?style=flat-square&labelColor=343b41"/></td>
+      <td><img alt="Forks" src="https://img.shields.io/github/forks/TECH-Rubicone/redux-saga-controller?style=flat-square&labelColor=343b41"/></td>
+      <td><img alt="Issues" src="https://img.shields.io/github/issues/TECH-Rubicone/rredux-saga-controller?style=flat-square&labelColor=343b41"/></td>
+      <td><img alt="Pull Requests" src="https://img.shields.io/github/issues-pr/TECH-Rubicone/redux-saga-controller?style=flat-square&labelColor=343b41"/></td>
     </tr>
   </tbody>
 </table>
