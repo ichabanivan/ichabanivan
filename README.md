@@ -6,9 +6,6 @@
     <a href="https://t.me/zanusilker">
       <img align="left" alt="Ivan Chaban | Telegram" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/telegram.svg" />
     </a>
-    <a href="https://twitter.com/zanusilker">
-      <img align="left" alt="Ian Chaban | Twitter" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/twitter.svg" />
-    </a>
     <a href="https://www.linkedin.com/in/ivanchaban">
       <img align="left" alt="Ivan Chaban | LinkedIn" width="22px" src="https://raw.githubusercontent.com/zanusilker/zanusilker/main/assets/linkedin.svg" />
     </a>
