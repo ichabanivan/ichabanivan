@@ -17,7 +17,7 @@
 
 <p> Hi, I'm Ivan Chaban, a full stack web developer from Ukraine. </p>
 
-- 🔭 I’m currently working as a Senior Software Developer in Intelliceed Inc.
+- 🔭 I’m currently working as a Senior Software Developer
 - 🌱 I’m currently learning Flutter and NodeJS
 - 💬 Ask me about anything, I am happy to help
 
