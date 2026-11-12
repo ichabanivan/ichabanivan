@@ -30,7 +30,9 @@ jobs:
         run: node scripts/render.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }} # optional; falls back to GitHub data
+          # optional WakaTime share-embed JSON URLs; without them the panel uses GitHub data
+          WAKATIME_ACTIVITY_URL: ${{ secrets.WAKATIME_ACTIVITY_URL }}
+          WAKATIME_LANGUAGES_URL: ${{ secrets.WAKATIME_LANGUAGES_URL }}
 
       - name: Commit if changed
         run: |

@@ -2,12 +2,13 @@
 // Renders the profile banner and the auto-updated panel (light + dark SVGs) and refreshes the
 // README block between <!-- PANEL:START --> and <!-- PANEL:END -->.
 //
-// Data: WakaTime last 7 days (optional, env WAKATIME_API_KEY) + public GitHub repos.
+// Data: WakaTime last 7 days (optional share-embed URLs, env WAKATIME_ACTIVITY_URL and
+// WAKATIME_LANGUAGES_URL) + public GitHub repos.
 // Text is outlined from scripts/glyphs.json (the CV site's fonts), so the SVGs render the same
 // everywhere. No npm dependencies; needs Node 20+.
 //
 //   node scripts/render.mjs                 # live data
-//   node scripts/render.mjs --fixture=x.json  # test data: { wakatime?: <summaries response>, repos: [...] }
+//   node scripts/render.mjs --fixture=x.json  # test data: { wakatime?: <activity JSON>, languages?: [{name, weight}], repos: [...] }
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -170,11 +171,11 @@ function panel(c, data) {
     tile(lx, y2, lw, H2);
     out.push(eyebrow('LANGUAGES · LAST 7 DAYS', lx + 28, y2 + 46));
     const cols = [c.accent, c.text, c.muted, c.line2, c.surface2];
-    const sum = languages.reduce((s, l) => s + l.seconds, 0) || 1;
+    const sum = languages.reduce((s, l) => s + l.weight, 0) || 1;
     let bx = lx + 28;
     const barW = lw - 56;
     languages.forEach((l, n) => {
-      const w = (barW * l.seconds) / sum;
+      const w = (barW * l.weight) / sum;
       out.push(`<rect class="x" style="animation-delay:${(0.3 + n * 0.05).toFixed(2)}s" x="${r(bx)}" y="${y2 + 72}" width="${r(Math.max(w - 3, 2))}" height="14" rx="3" fill="${cols[n]}"/>`);
       bx += w;
     });
@@ -182,7 +183,7 @@ function panel(c, data) {
       const y = y2 + 130 + n * 30;
       out.push(`<rect x="${lx + 28}" y="${y - 12}" width="12" height="12" rx="3" fill="${cols[n]}" stroke="${c.line2}"/>`);
       out.push(doc.text('medium', l.name, lx + 52, y, 18, { fill: c.text }).svg);
-      out.push(doc.text('medium', `${Math.round((l.seconds / sum) * 100)}%`, W - 28, y, 18, { fill: c.muted, anchor: 'end' }).svg);
+      out.push(doc.text('medium', `${Math.round((l.weight / sum) * 100)}%`, W - 28, y, 18, { fill: c.muted, anchor: 'end' }).svg);
     });
     if (!languages.length) out.push(doc.text('regular', 'No tracked time this week', lx + 28, y2 + 130, 18, { fill: c.muted }).svg);
   } else {
@@ -229,30 +230,55 @@ async function getJson(url, headers = {}) {
   return res.json();
 }
 
-function weekFrom(summaries) {
-  const days = summaries.data.map((d) => ({
+/** Top 4 languages + "Other", as relative weights (seconds or percent). */
+function topLanguages(list) {
+  const sorted = list.filter((l) => l.weight > 0 && l.name !== 'Other').sort((a, b) => b.weight - a.weight);
+  const languages = sorted.slice(0, 4);
+  const rest = sorted.slice(4).reduce((s, l) => s + l.weight, 0) + list.filter((l) => l.name === 'Other').reduce((s, l) => s + l.weight, 0);
+  if (rest) languages.push({ name: 'Other', weight: rest });
+  return languages;
+}
+
+/** activity: WakaTime "Coding Activity" JSON (summaries shape); languages: optional list of { name, weight }. */
+function weekFrom(activity, languages) {
+  const data = activity.data.slice(-7);
+  const days = data.map((d) => ({
     label: 'SMTWTFS'[new Date(d.range.date + 'T00:00:00Z').getUTCDay()],
     seconds: d.grand_total.total_seconds,
   }));
-  const totals = new Map();
-  for (const d of summaries.data) for (const l of d.languages ?? []) totals.set(l.name, (totals.get(l.name) ?? 0) + l.total_seconds);
-  const sorted = [...totals].map(([name, seconds]) => ({ name, seconds })).filter((l) => l.seconds >= 60).sort((a, b) => b.seconds - a.seconds);
-  const languages = sorted.slice(0, 4);
-  const rest = sorted.slice(4).reduce((s, l) => s + l.seconds, 0);
-  if (rest) languages.push({ name: 'Other', seconds: rest });
+  let min = 0;
+  if (!languages) {
+    min = 60; // ignore languages under a minute
+    const totals = new Map();
+    for (const d of data) for (const l of d.languages ?? []) totals.set(l.name, (totals.get(l.name) ?? 0) + l.total_seconds);
+    languages = [...totals].map(([name, weight]) => ({ name, weight }));
+  }
   return {
     days,
     total: days.reduce((s, d) => s + d.seconds, 0),
-    languages,
-    end: dayMonth(summaries.data.at(-1).range.date),
+    languages: topLanguages(languages.filter((l) => l.weight >= min)),
+    end: dayMonth(data.at(-1).range.date),
   };
+}
+
+// WakaTime "share" embeddables (wakatime.com/share/@user/<id>.json). The WakaTime API itself no longer
+// accepts API keys, and these URLs need no token. Both are optional; set them as repo secrets.
+async function wakatime() {
+  const ok = (u) => u && u.startsWith('https://wakatime.com/share/');
+  const activityUrl = process.env.WAKATIME_ACTIVITY_URL;
+  const languagesUrl = process.env.WAKATIME_LANGUAGES_URL;
+  if (!activityUrl) return null;
+  if (!ok(activityUrl) || (languagesUrl && !ok(languagesUrl))) throw new Error('WakaTime URLs must be https://wakatime.com/share/... JSON embeds');
+  const activity = await getJson(activityUrl);
+  const langs = languagesUrl ? (await getJson(languagesUrl)).data.map((l) => ({ name: l.name, weight: l.percent })) : null;
+  return weekFrom(activity, langs);
 }
 
 async function load() {
   const fixture = process.argv.find((a) => a.startsWith('--fixture='));
   if (fixture) {
     const f = JSON.parse(readFileSync(fixture.split('=')[1], 'utf8'));
-    return { years: yearsSince(), repos: f.repos, week: f.wakatime ? weekFrom(f.wakatime) : null };
+    return { years: yearsSince(), repos: f.repos, week: f.wakatime ? weekFrom(f.wakatime, f.languages ?? null) : null };
   }
   const gh = process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {};
   const all = await getJson(`https://api.github.com/users/${USER}/repos?sort=pushed&per_page=30&type=owner`, gh);
@@ -262,15 +288,11 @@ async function load() {
     .map((x) => ({ name: x.name, language: x.language, pushed: x.pushed_at }));
 
   let week = null;
-  const key = process.env.WAKATIME_API_KEY;
-  if (key) {
-    try {
-      const auth = { authorization: `Basic ${Buffer.from(key).toString('base64')}` };
-      week = weekFrom(await getJson('https://wakatime.com/api/v1/users/current/summaries?range=last_7_days', auth));
-    } catch (e) {
-      // Keep the job green but visible; the panel falls back to GitHub data.
-      console.log(`::warning::WakaTime unavailable, using GitHub fallback (${e.message})`);
-    }
+  try {
+    week = await wakatime();
+  } catch (e) {
+    // Keep the job green but visible; the panel falls back to GitHub data.
+    console.log(`::warning::WakaTime unavailable, using GitHub fallback (${e.message})`);
   }
   return { years: yearsSince(), repos, week };
 }
