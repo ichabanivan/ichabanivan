@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://ichabanivan.github.io/"><b>🌐 CV site</b></a> ·
   <a href="https://www.linkedin.com/in/ivanchaban/">LinkedIn</a> ·
-  <a href="https://t.me/zanusilker">Telegram</a> ·
+  <a href="https://t.me/ichabanivan">Telegram</a> ·
   <a href="mailto:ichabanivan@gmail.com">Email</a>
 </p>
 
