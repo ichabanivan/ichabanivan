@@ -2,13 +2,12 @@
 // Renders the profile banner and the auto-updated panel (light + dark SVGs) and refreshes the
 // README block between <!-- PANEL:START --> and <!-- PANEL:END -->.
 //
-// Data: WakaTime last 7 days (optional share-embed URLs, env WAKATIME_ACTIVITY_URL and
-// WAKATIME_LANGUAGES_URL) + public GitHub repos.
+// Data: public GitHub repos (latest pushed).
 // Text is outlined from scripts/glyphs.json (the CV site's fonts), so the SVGs render the same
 // everywhere. No npm dependencies; needs Node 20+.
 //
 //   node scripts/render.mjs                 # live data
-//   node scripts/render.mjs --fixture=x.json  # test data: { wakatime?: <activity JSON>, languages?: [{name, weight}], repos: [...] }
+//   node scripts/render.mjs --fixture=x.json  # test data: { repos: [{ name, language, pushed }] }
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -84,7 +83,7 @@ const r = (n) => Math.round(n * 10) / 10;
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
 // ------------------------------------------------------------------ banner
-const ARC = 'M48 24v-5a7 7 0 0 0-7-7h-6a7 7 0 0 0-7 7v26a7 7 0 0 0 7 7h6a7 7 0 0 0 7-7v-5';
+const ARC = 'M48 23v-4a8 8 0 0 0-8-8h-4a8 8 0 0 0-8 8v26a8 8 0 0 0 8 8h4a8 8 0 0 0 8-8v-4';
 
 function monogram(x, y, size, c) {
   const k = size / 64;
@@ -114,13 +113,8 @@ function yearsSince(now = new Date()) {
   return Math.floor(months / 12);
 }
 
-const hm = (sec) => {
-  const m = Math.round(sec / 60);
-  return `${Math.floor(m / 60)} H ${String(m % 60).padStart(2, '0')} M`;
-};
 const MONTHS = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
 const monthYear = (iso) => { const d = new Date(iso); return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
-const dayMonth = (iso) => { const d = new Date(iso + 'T00:00:00Z'); return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`; };
 
 function panel(c, data) {
   const W = 1000, GAP = 14;
@@ -148,73 +142,28 @@ function panel(c, data) {
   });
 
   const y2 = 168 + GAP;
-  const H2 = data.week ? 270 : 200;
-  if (data.week) {
-    const { days, total, languages } = data.week;
-    // chart
-    const cw = 570;
-    tile(0, y2, cw, H2);
-    out.push(eyebrow('CODING · LAST 7 DAYS', 28, y2 + 46));
-    out.push(doc.text('display', hm(total), cw - 28, y2 + 52, 40, { fill: c.text, anchor: 'end', tracking: 0.02 }).svg);
-    const max = Math.max(...days.map((d) => d.seconds), 1);
-    const top = Math.max(...days.map((d) => d.seconds));
-    const bw = 46, step = (cw - 56 - bw) / 6, base = y2 + 214, bh = 128;
-    days.forEach((d, n) => {
-      const x = 28 + n * step;
-      const h = Math.max(d.seconds ? 6 : 0, (d.seconds / max) * bh);
-      out.push(`<rect x="${r(x)}" y="${base - bh}" width="${bw}" height="${bh}" rx="8" fill="${c.surface2}"/>`);
-      if (h) out.push(`<rect class="s" style="animation-delay:${(0.3 + n * 0.05).toFixed(2)}s" x="${r(x)}" y="${r(base - h)}" width="${bw}" height="${r(h)}" rx="8" fill="${d.seconds === top ? c.accent : c.muted}"/>`);
-      out.push(doc.text('semibold', d.label, x + bw / 2, base + 30, 14, { fill: c.muted, anchor: 'middle', tracking: 0.08 }).svg);
-    });
-    // languages
-    const lx = cw + GAP, lw = W - lx;
-    tile(lx, y2, lw, H2);
-    out.push(eyebrow('LANGUAGES · LAST 7 DAYS', lx + 28, y2 + 46));
-    const cols = [c.accent, c.text, c.muted, c.line2, c.surface2];
-    const sum = languages.reduce((s, l) => s + l.weight, 0) || 1;
-    let bx = lx + 28;
-    const barW = lw - 56;
-    languages.forEach((l, n) => {
-      const w = (barW * l.weight) / sum;
-      out.push(`<rect class="x" style="animation-delay:${(0.3 + n * 0.05).toFixed(2)}s" x="${r(bx)}" y="${y2 + 72}" width="${r(Math.max(w - 3, 2))}" height="14" rx="3" fill="${cols[n]}"/>`);
-      bx += w;
-    });
-    languages.forEach((l, n) => {
-      const y = y2 + 130 + n * 30;
-      out.push(`<rect x="${lx + 28}" y="${y - 12}" width="12" height="12" rx="3" fill="${cols[n]}" stroke="${c.line2}"/>`);
-      out.push(doc.text('medium', l.name, lx + 52, y, 18, { fill: c.text }).svg);
-      out.push(doc.text('medium', `${Math.round((l.weight / sum) * 100)}%`, W - 28, y, 18, { fill: c.muted, anchor: 'end' }).svg);
-    });
-    if (!languages.length) out.push(doc.text('regular', 'No tracked time this week', lx + 28, y2 + 130, 18, { fill: c.muted }).svg);
-  } else {
-    // fallback: latest public work
-    tile(0, y2, W, H2);
-    out.push(eyebrow('LATEST PUBLIC WORK', 28, y2 + 46));
-    const cw = (W - 56) / 3;
-    data.repos.forEach((repo, n) => {
-      const x = 28 + n * cw;
-      if (n) out.push(`<path d="M${r(x - 20)} ${y2 + 84}V${y2 + 172}" stroke="${c.line}" stroke-width="2"/>`);
-      // shrink long repo names to fit their column
-      const fit = Math.min(34, (34 * (cw - 44)) / doc.text('display', repo.name.toUpperCase(), 0, 0, 34).width);
-      out.push(`<g class="f" style="animation-delay:${(0.25 + n * 0.08).toFixed(2)}s">`
-        + doc.text('display', repo.name.toUpperCase(), x, y2 + 128, fit, { fill: c.text, tracking: 0.02 }).svg
-        + doc.text('regular', [repo.language, monthYear(repo.pushed)].filter(Boolean).join(' · '), x, y2 + 162, 18, { fill: c.muted }).svg
-        + '</g>');
-    });
-  }
-  const H = y2 + H2 + (data.week ? 44 : 0);
-  if (data.week) out.push(doc.text('medium', `Updated ${data.week.end} · WakaTime`, W / 2, H - 12, 15, { fill: c.muted, anchor: 'middle' }).svg);
+  const H2 = 200;
+  // latest public work
+  tile(0, y2, W, H2);
+  out.push(eyebrow('LATEST PUBLIC WORK', 28, y2 + 46));
+  const cw = (W - 56) / 3;
+  data.repos.forEach((repo, n) => {
+    const x = 28 + n * cw;
+    if (n) out.push(`<path d="M${r(x - 20)} ${y2 + 84}V${y2 + 172}" stroke="${c.line}" stroke-width="2"/>`);
+    // shrink long repo names to fit their column
+    const fit = Math.min(34, (34 * (cw - 44)) / doc.text('display', repo.name.toUpperCase(), 0, 0, 34).width);
+    out.push(`<g class="f" style="animation-delay:${(0.25 + n * 0.08).toFixed(2)}s">`
+      + doc.text('display', repo.name.toUpperCase(), x, y2 + 128, fit, { fill: c.text, tracking: 0.02 }).svg
+      + doc.text('regular', [repo.language, monthYear(repo.pushed)].filter(Boolean).join(' · '), x, y2 + 162, 18, { fill: c.muted }).svg
+      + '</g>');
+  });
+  const H = y2 + H2;
   return doc.render(W, H, alt(data), out.join(''));
 }
 
 function alt(data) {
   const parts = [`${data.years}+ years in the industry`, 'now Senior Software Engineer at Fiverr', 'focus: front-end architecture and design systems'];
-  if (data.week) {
-    const top = data.week.languages.slice(0, 3).map((l) => l.name).join(', ');
-    parts.push(`last 7 days: ${hm(data.week.total).toLowerCase().replace(/ /g, '')} of coding${top ? `, mostly ${top}` : ''}`);
-  } else {
-    parts.push(`latest public work: ${data.repos.map((x) => x.name).join(', ')}`);
-  }
+  parts.push(`latest public work: ${data.repos.map((x) => x.name).join(', ')}`);
   const s = parts.join('; ');
   return s[0].toUpperCase() + s.slice(1) + '.';
 }
@@ -223,64 +172,18 @@ function alt(data) {
 async function getJson(url, headers = {}) {
   const res = await fetch(url, { headers: { 'user-agent': 'profile-readme-renderer', ...headers } });
   if (!res.ok) {
-    // Include a short, single-line body excerpt so failures (bad key, plan limits, bot blocks) are diagnosable.
+    // Include a short, single-line body excerpt so failures are diagnosable.
     const body = (await res.text()).replace(/\s+/g, ' ').slice(0, 200);
     throw new Error(`${url} -> ${res.status} ${res.statusText} ${body}`);
   }
   return res.json();
 }
 
-/** Top 4 languages + "Other", as relative weights (seconds or percent). */
-function topLanguages(list) {
-  const sorted = list.filter((l) => l.weight > 0 && l.name !== 'Other').sort((a, b) => b.weight - a.weight);
-  const languages = sorted.slice(0, 4);
-  const rest = sorted.slice(4).reduce((s, l) => s + l.weight, 0) + list.filter((l) => l.name === 'Other').reduce((s, l) => s + l.weight, 0);
-  if (rest) languages.push({ name: 'Other', weight: rest });
-  return languages;
-}
-
-/** activity: WakaTime "Coding Activity" JSON (summaries shape); languages: optional list of { name, weight }. */
-function weekFrom(activity, languages) {
-  const data = activity.data.slice(-7);
-  const days = data.map((d) => ({
-    label: 'SMTWTFS'[new Date(d.range.date + 'T00:00:00Z').getUTCDay()],
-    seconds: d.grand_total.total_seconds,
-  }));
-  let min = 0;
-  if (!languages) {
-    min = 60; // ignore languages under a minute
-    const totals = new Map();
-    for (const d of data) for (const l of d.languages ?? []) totals.set(l.name, (totals.get(l.name) ?? 0) + l.total_seconds);
-    languages = [...totals].map(([name, weight]) => ({ name, weight }));
-  }
-  return {
-    days,
-    total: days.reduce((s, d) => s + d.seconds, 0),
-    languages: topLanguages(languages.filter((l) => l.weight >= min)),
-    end: dayMonth(data.at(-1).range.date),
-  };
-}
-
-// WakaTime "share" embeddables (wakatime.com/share/@user/<id>.json). The WakaTime API itself no longer
-// accepts API keys, and these URLs need no token. Both are optional; set them as repo secrets.
-async function wakatime() {
-  const ok = (u) => u && u.startsWith('https://wakatime.com/share/');
-  const activityUrl = process.env.WAKATIME_ACTIVITY_URL;
-  const languagesUrl = process.env.WAKATIME_LANGUAGES_URL;
-  if (!activityUrl) return null;
-  if (!ok(activityUrl) || (languagesUrl && !ok(languagesUrl))) throw new Error('WakaTime URLs must be https://wakatime.com/share/... JSON embeds');
-  const activity = await getJson(activityUrl);
-  const langs = languagesUrl ? (await getJson(languagesUrl)).data.map((l) => ({ name: l.name, weight: l.percent })) : null;
-  const week = weekFrom(activity, langs);
-  // Until there is real tracked time (new plugin, holidays), keep the GitHub view instead of empty charts.
-  return week.total >= 600 ? week : null;
-}
-
 async function load() {
   const fixture = process.argv.find((a) => a.startsWith('--fixture='));
   if (fixture) {
     const f = JSON.parse(readFileSync(fixture.split('=')[1], 'utf8'));
-    return { years: yearsSince(), repos: f.repos, week: f.wakatime ? weekFrom(f.wakatime, f.languages ?? null) : null };
+    return { years: yearsSince(), repos: f.repos };
   }
   const gh = process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {};
   const all = await getJson(`https://api.github.com/users/${USER}/repos?sort=pushed&per_page=30&type=owner`, gh);
@@ -289,14 +192,7 @@ async function load() {
     .slice(0, 3)
     .map((x) => ({ name: x.name, language: x.language, pushed: x.pushed_at }));
 
-  let week = null;
-  try {
-    week = await wakatime();
-  } catch (e) {
-    // Keep the job green but visible; the panel falls back to GitHub data.
-    console.log(`::warning::WakaTime unavailable, using GitHub fallback (${e.message})`);
-  }
-  return { years: yearsSince(), repos, week };
+  return { years: yearsSince(), repos };
 }
 
 // ------------------------------------------------------------------ main
