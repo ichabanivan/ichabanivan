@@ -271,7 +271,9 @@ async function wakatime() {
   if (!ok(activityUrl) || (languagesUrl && !ok(languagesUrl))) throw new Error('WakaTime URLs must be https://wakatime.com/share/... JSON embeds');
   const activity = await getJson(activityUrl);
   const langs = languagesUrl ? (await getJson(languagesUrl)).data.map((l) => ({ name: l.name, weight: l.percent })) : null;
-  return weekFrom(activity, langs);
+  const week = weekFrom(activity, langs);
+  // Until there is real tracked time (new plugin, holidays), keep the GitHub view instead of empty charts.
+  return week.total >= 600 ? week : null;
 }
 
 async function load() {
