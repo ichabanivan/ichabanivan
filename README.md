@@ -1,7 +1,7 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-  <img src="assets/banner-light.svg" alt="Ivan Chaban, Senior Software Engineer at Fiverr" width="100%">
-</picture>
+<!-- Theme-specific links: GitHub hides links ending in #gh-dark-mode-only / #gh-light-mode-only
+     for the other theme. A <picture> inside <a> loses its link on GitHub, so two links are used. -->
+<a href="https://ichabanivan.github.io/#gh-dark-mode-only"><img src="assets/banner-dark.svg" alt="Ivan Chaban, Senior Software Engineer at Fiverr. Open the CV site" width="100%"></a>
+<a href="https://ichabanivan.github.io/#gh-light-mode-only"><img src="assets/banner-light.svg" alt="Ivan Chaban, Senior Software Engineer at Fiverr. Open the CV site" width="100%"></a>
 
 <!-- PANEL:START -->
 <picture>
