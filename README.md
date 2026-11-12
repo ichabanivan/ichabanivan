@@ -77,15 +77,3 @@
     </tr>
   </tbody>
 </table>
-<table>
-  <tbody>
-    <tr>
-      <td>
-        <img width="100%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=ichabanivan&layout=compact&hide=html" alt="GitHub stats" />
-      </td>
-      <td>
-        <img width="100%" src="https://github-readme-stats.vercel.app/api?username=ichabanivan&show_icons=true" alt="GitHub stats" />
-      </td>
-    </tr>
-  </tbody>
-</table>
