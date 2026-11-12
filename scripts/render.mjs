@@ -221,7 +221,11 @@ function alt(data) {
 // ------------------------------------------------------------------ data
 async function getJson(url, headers = {}) {
   const res = await fetch(url, { headers: { 'user-agent': 'profile-readme-renderer', ...headers } });
-  if (!res.ok) throw new Error(`${url} -> ${res.status} ${res.statusText}`);
+  if (!res.ok) {
+    // Include a short, single-line body excerpt so failures (bad key, plan limits, bot blocks) are diagnosable.
+    const body = (await res.text()).replace(/\s+/g, ' ').slice(0, 200);
+    throw new Error(`${url} -> ${res.status} ${res.statusText} ${body}`);
+  }
   return res.json();
 }
 
