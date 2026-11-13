@@ -240,7 +240,7 @@ const icon = ([id, name, url]) => {
   const img = (theme, mode) => `<a href="${url}${mode ? `#gh-${mode}-mode-only` : ''}"><img src="${src(theme)}${mode ? `#gh-${mode}-mode-only` : ''}" alt="${name}" title="${name}" width="40" height="40"></a>`;
   return local || THEMED.has(id) ? [img('dark', 'dark'), img('light', 'light')] : [img('dark')];
 };
-// One group per table row (GitHub keeps <table>), in this order.
+// One group per line: bold group name, then its icons. Order below.
 const LAYOUT = [
   'Languages', 'Frameworks & runtimes', 'Libraries', 'Markup & styling', 'Databases & data', 'Cloud & DevOps',
   'Build tools', 'Testing & code quality', 'Monitoring & analytics', 'Version control & collaboration',
@@ -248,8 +248,8 @@ const LAYOUT = [
 ];
 const missing = Object.keys(STACK).filter((g) => !LAYOUT.includes(g));
 if (missing.length || LAYOUT.some((g) => !STACK[g])) throw new Error(`LAYOUT and STACK groups differ: ${missing.join(', ')}`);
-const row = (group) => `<tr><td>\n<b>${group}</b><br>\n${STACK[group].flatMap(icon).join('\n')}\n</td></tr>`;
-const block = '<!-- STACK:START -->\n<table>\n' + LAYOUT.map(row).join('\n') + '\n</table>\n<!-- STACK:END -->';
+const group = (name) => `**${name}**\n\n<p>\n${STACK[name].flatMap(icon).map((s) => '  ' + s).join('\n')}\n</p>`;
+const block = '<!-- STACK:START -->\n' + LAYOUT.map(group).join('\n\n') + '\n<!-- STACK:END -->';
 
 const readmePath = join(ROOT, 'README.md');
 const readme = readFileSync(readmePath, 'utf8');
