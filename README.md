@@ -19,6 +19,17 @@ React and TypeScript apps, and care most about front-end architecture and design
 
 <br/>
 
+## Stats
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://streak-stats.demolab.com?user=ichabanivan&hide_border=true&background=0B0B0C&ring=CD0D2E&fire=FF4D67&currStreakNum=ECECEE&sideNums=ECECEE&currStreakLabel=FF4D67&sideLabels=ECECEE&dates=A1A1AA&stroke=2A2A2E">
+    <img src="https://streak-stats.demolab.com?user=ichabanivan&hide_border=true&background=F6F8FA&ring=CD0D2E&fire=CD0D2E&currStreakNum=1F2328&sideNums=1F2328&currStreakLabel=CD0D2E&sideLabels=1F2328&dates=59636E&stroke=D1D9E0" alt="GitHub contribution streak" height="165">
+  </picture>
+</p>
+
+<br/>
+
 ## Tech stack
 
 <!-- STACK:START -->
@@ -213,15 +224,6 @@ React and TypeScript apps, and care most about front-end architecture and design
 <!-- STACK:END -->
 
 <br/>
-
-## Stats
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://streak-stats.demolab.com?user=ichabanivan&hide_border=true&background=0B0B0C&ring=CD0D2E&fire=FF4D67&currStreakNum=ECECEE&sideNums=ECECEE&currStreakLabel=FF4D67&sideLabels=ECECEE&dates=A1A1AA&stroke=2A2A2E">
-    <img src="https://streak-stats.demolab.com?user=ichabanivan&hide_border=true&background=F6F8FA&ring=CD0D2E&fire=CD0D2E&currStreakNum=1F2328&sideNums=1F2328&currStreakLabel=CD0D2E&sideLabels=1F2328&dates=59636E&stroke=D1D9E0" alt="GitHub contribution streak" height="165">
-  </picture>
-</p>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://capsule-render.vercel.app/api?type=waving&section=footer&height=110&color=0:0b0b0c,100:cd0d2e">
